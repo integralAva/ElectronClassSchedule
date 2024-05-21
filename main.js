@@ -3,7 +3,10 @@ const path = require('path');
 const fs = require('fs')
 const os = require('os')
 const createShortcut = require('windows-shortcuts')
+// 启动文件夹 用于开机自启动
 const startupFolderPath = path.join(os.homedir(), 'AppData', 'Roaming', 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Startup');
+// 桌面
+const desktopFolderPath = path.join(os.homedir(), 'Desktop')
 const prompt = require('electron-prompt');
 const Store = require('electron-store');
 const { DisableMinimize } = require('electron-disable-minimize');
@@ -13,9 +16,12 @@ let form = undefined;
 var win = undefined;
 let template = []
 let basePath = app.isPackaged ? './resources/app/' : './'
+
+// 检查是否已经有一个实例在运行，否则退出
 if (!app.requestSingleInstanceLock({ key: 'classSchedule' })) {
     app.quit();
 }
+
 const createWindow = () => {
     win = new BrowserWindow({
         x: 0,
@@ -41,6 +47,8 @@ const createWindow = () => {
     if (store.get('isWindowAlwaysOnTop', true))
         win.setAlwaysOnTop(true, 'screen-saver', 9999999999999)
 }
+
+// 开机自启动
 function setAutoLaunch() {
     const shortcutName = '电子课表(请勿重命名).lnk'
     app.setLoginItemSettings({ // backward compatible
@@ -58,16 +66,92 @@ function setAutoLaunch() {
     }
 
 }
+
+// 只有ready后才能创建窗口
 app.whenReady().then(() => {
+    // 创建
     createWindow()
+    // 移除上方菜单栏
     Menu.setApplicationMenu(null)
     win.webContents.on('did-finish-load', () => {
         win.webContents.send('getWeekIndex');
     })
     const handle = win.getNativeWindowHandle();
+    // 禁止最小化（Win + D）
     DisableMinimize(handle); // Thank to peter's project https://github.com/tbvjaos510/electron-disable-minimize
     setAutoLaunch()
 })
+
+// 画板功能
+function createDrawWindow() {
+    let drawer = new BrowserWindow({
+        width: 300,
+        height: 200,
+        frame: false,
+        transparent: true,
+        minimizable: false,
+        maximizable: false,
+        autoHideMenuBar: true,
+        resizable: true,
+        type: 'toolbar',
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true
+        }
+    });
+
+    drawer.loadFile('drawer.html');
+
+    // drawer.webContents.openDevTools();
+
+    drawer.webContents.on('context-menu', (e,p) => {
+        let menu = Menu.buildFromTemplate([
+            {label: '关闭', click: () => {
+                drawer.close()
+                drawer = null;
+            }},
+            {label: '固定', click: () => {
+                dialog.showMessageBox(win, {
+                    title: '请确认',
+                    message: '固定后将无法移动或关闭，确定要固定窗口吗?',
+                    buttons: ['取消', '确定']
+                }).then((data) => {
+                    if (data.response) drawer.setIgnoreMouseEvents(true);
+                })
+            }}
+        ]);
+        menu.popup();
+    })
+
+    drawer.webContents.on('did-finish-load', () => {
+        dialog.showOpenDialog(drawer, {
+            title: '选择一个HTML格式文本',
+            defaultPath: desktopFolderPath,
+            filters: [
+                {name: '文本文档', extensions: ['txt']},
+                {name: 'HTML文件', extensions: ['html']}
+            ],
+            properties: [
+                'openFile'
+            ]
+        }).then(result => {
+            if (result.canceled){
+                drawer.close();
+                drawer = null;
+                return;
+            }
+            fs.readFile(result.filePaths[0], (e, data) => {
+                if (e){
+                    drawer.close();
+                    drawer = null;
+                    return;
+                }
+                drawer.webContents.send('setDivHtml', data.toString());
+            })
+        })
+    });
+}
 
 ipcMain.on('getWeekIndex', (e, arg) => {
     tray = new Tray(basePath + 'image/icon.png')
@@ -104,6 +188,11 @@ ipcMain.on('getWeekIndex', (e, arg) => {
             type: 'separator'
         },
         {
+            icon: basePath + 'image/drawing.png',
+            label: '新建HTML画板',
+            click: () => createDrawWindow()
+        },
+        {
             icon: basePath + 'image/setting.png',
             label: '配置课表',
             click: () => {
@@ -128,7 +217,7 @@ ipcMain.on('getWeekIndex', (e, arg) => {
             icon: basePath + 'image/github.png',
             label: '源码仓库',
             click: () => {
-                shell.openExternal('https://github.com/EnderWolf006/ElectronClassSchedule');
+                shell.openExternal('https://github.com/integralAva/ElectronClassSchedule');
             }
         },
         {
@@ -191,9 +280,10 @@ ipcMain.on('getWeekIndex', (e, arg) => {
             }
         }
     ]
+    // 将第N周的click设为clicked
     template[arg].checked = true
     form = Menu.buildFromTemplate(template)
-    tray.setToolTip('电子课表 - by lsl')
+    tray.setToolTip('电子课表 - by lsl & integralAva')
     function trayClicked() {
         tray.popUpContextMenu(form)
     }

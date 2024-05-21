@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "classSchedule",
   "main": "main.js",
-  "author": "lsl",
+  "author": "lsl integralAva",
   "license": "GPLv3",
   "scripts": {
     "start": "electron .",

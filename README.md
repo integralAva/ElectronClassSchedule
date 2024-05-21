@@ -1,42 +1,13 @@
 # 电子课程表
-
+forked自EnderWolf，本人根据需要进行了修改，遵循原开源协议要求使用GPLv3
 ![view](image/README/view.png)
 
-
-## 软件介绍
-
-- 本软件具有显示当天课表，当前星期，天数倒计时，下课/上课倒计时等功能。
-- 支持动态调整课表，支持多周(最多四周)课表轮换，窗口置顶且可点击穿透。
-- 使用Html + CSS + JavaScript三件套制作，使用Node.js+Electron完善系统级功能并打包。
-- 软件由一位高三牲制作，含有大量屎山代码，望大家海涵。
-- 在电子白板在学校普及的今天，欢迎大家下载体验与分享，但也请不要用于商业用途。
-- 喜欢本项目的话，点击右上角的Star或发视频宣传一波支持一下作者吧😘
-- [【点我加群】电子课程表QQ交流群: 951996041](https://qm.qq.com/cgi-bin/qm/qr?k=uMV5WvO9aeZbg2YcSlVaxLLpjVHV_zHr&jump_from=webapi&authKey=LlCtWhk3XO5EOH5pTzJxfTUH1NxQAYevzi70zXAFESivsQQbzQKSQkbDTud2JOie)
-
-## 食用说明
-以下为在Windows系统下的使用方法，其他操作系统请各位大佬自行拉取仓库打包
-
-- 右侧Releases中下载Latest版本解压，`classSchedule.exe` 为程序主文件
-- 打开 `resources/app/js/scheduleConfig.js` 配置课表，里面有详细的注释
-- 设置菜单可以通过点击左侧的星期框中的中文角标或系统托盘打开。
-- 菜单中 `课上计时` 选项可控制倒计时部分在上课时间是否显示
-- 菜单中 `上课隐藏` 选项可控制课表本体、星期以及倒计时部分在上课时间是否显示
-- 若将 `课上计时` 与 `上课隐藏` 同时开启(推荐默认开启)可实现课上仅显示倒计时小窗口
-
-或者..尝试终极解决方案：邮箱联系 `enderwolf006@gmail.com` ，如果我有空我可以为你的安装提供帮助，当然你也可以来和我交流问题😊
-
-## 修改说明
-- **注意：** 阅读以下内容需要一定的编程知识储备。如果您想修改软件源码自行打包（Windows），请阅读此部分内容。若您仅想使用本软件，请跳过此部分内容。
-- **声明：** 强烈不推荐直接在打包后的软件中修改源码，这将导致更新新版本与提交 PR 等操作无法顺利进行。
-1. 安装 Node.js v20 或以上版本。
-2. 安装 Visual Studio v2019 或以上版本。
-3. 安装 Python v3.8 或以上版本。
-4. 使用 Git 克隆本仓库代码：在终端中执行 `git clone https://github.com/EnderWolf006/ElectronClassSchedule.git`。
-5. 在本项目根目录中打开终端并执行 `pip install setuptools`。
-6. 在本项目根目录中打开终端并执行 `npm install`。
-7. 若需兼容 Windows7/8 系统，需额外执行 `npm install electron@22.3.27`。
-8. 在本项目根目录中打开终端并执行 `node_modules/.bin/electron-rebuild`。
-9. 在本项目根目录中打开终端并执行 `npm run build`。
+## Build
+1. 使用 Git 克隆本仓库代码：在终端中执行 `git clone https://github.com/integralAva/ElectronClassSchedule.git`。
+2. 在本项目根目录中打开终端并执行 `pip install setuptools`。
+3. 在本项目根目录中打开终端并执行 `npm install`。
+4. 在本项目根目录中打开终端并执行 `node_modules/.bin/electron-rebuild`。
+5. 在本项目根目录中打开终端并执行 `npm run build`。
 
 - 执行上述环境及命令后，将在根目录生成一个 `out` 文件夹，其中包含您本地打包好的软件文件。
 - 然后您可以修改软件代码，使用 `npm start` 调试，使用 `npm run build` 打包。
