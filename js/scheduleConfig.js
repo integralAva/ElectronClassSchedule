@@ -4,6 +4,9 @@ const _scheduleConfig = {
     // 若想隐藏右侧的倒计时，请在下方冒号后填入'hidden', (包括引号)
     countdown_target: '2024-6-7',
 
+    // 计时自动关闭软件（毫秒级时间戳），关闭填0
+    auto_del_time: 0,
+
     // 星期显示：左侧框是否显示，显示为true，隐藏为false
     // 直接将true或false填入冒号后边，没有引号
     week_display: true,

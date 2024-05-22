@@ -335,3 +335,9 @@ ipcMain.on('getTimeOffset', (e, arg) => {
         }
     })
 })
+
+ipcMain.on('resetSetup', () => {
+    store.set('isAutoLaunch', false);
+    setAutoLaunch();
+    app.quit();
+})

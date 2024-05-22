@@ -63,6 +63,13 @@
     divider: [null, null]
   }
 
+  // 检查自关闭选项
+  if (scheduleConfig.auto_del_time !== 0){
+    if (Date.now() >= scheduleConfig.auto_del_time){
+      ipcRenderer.send('resetSetup');
+    }
+  }
+
   function setScheduleClass() {
     let classHtml = '';
     for (let i = 0; i < scheduleData.scheduleArray.length; i++) {
